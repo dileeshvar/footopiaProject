@@ -1,0 +1,22 @@
+<tbody>				
+<tr align="center">
+	<td id="playerType"> {{eachPlayer.player.player_type}} </td>
+	<td id="playerName"> {{eachPlayer.player.player_name}} 	</td>		
+	
+	<td id="yellowCardStatus">
+	{% if eachPlayer.yellow_card == True %}
+		<img src="/static/images/yellowCard.png" alt="yellowCard" height="10" width="8"/>
+	{% else %}
+		-
+	{% endif %}
+	
+	</td>		 
+	<td id="redCardStatus"> 
+	{% if eachPlayer.red_card == True %}
+		<img src="/static/images/redCard.png" alt="redCard" height="10" width="8"/>
+	{% else %}
+		-
+	{% endif %}
+	</td>	
+  </tr>		
+</tbody>

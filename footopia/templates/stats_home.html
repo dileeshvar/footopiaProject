@@ -1,0 +1,29 @@
+{% extends 't_base.html' %} 
+
+{%block content %}
+<br>
+<div class="col-sm-9">
+  <div class="panel panel-default">
+    <div class="panel-heading">Statistics Panel</div>
+    <div class="panel-body">
+      <div class="table">
+	    {% block data_frame %}
+			<div class = "data" >
+			</div>
+		{%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-sm-3">
+  <div class="panel panel-default">
+    <div class="panel-heading">Selection Panel</div>
+    <div class="panel-body">
+      <div class="table">
+        {%block selection_frame %}
+		{%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock content %}

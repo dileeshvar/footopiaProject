@@ -1,0 +1,17 @@
+{
+	"gameweek": "{{gameweek}}",
+	"fixtures": [
+		{% for match in matches %}
+		{
+			"match_id" : "{{match.match_api_id}}",
+			"team1" : "{{match.team1.club.club_name}}",
+			"team1_logo" : "{{match.team1.id}}",
+			"team2" : "{{match.team2.club.club_name}}",
+			"team2_logo" : "{{match.team2.id}}",
+			"date" : "{{match.match_date|date:'m/d H:i'}}",			
+			"team1Score" : "{{match.team1_score}}",
+			"team2Score" : "{{match.team2_score}}"
+		}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	]
+}

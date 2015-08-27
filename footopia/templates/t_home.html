@@ -1,0 +1,112 @@
+{% extends 't_base_home.html' %}
+{% load cust_tags %}
+{% block fixtures %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+          <div style="display:inline; width:40%;">Fixtures  &nbsp;&nbsp;</div>
+          <div style="display:inline;">
+          <select style="display:inline; width:80%;" id="selGWHome" name='gameweekHome' class="form-control">
+        {% for i in tournament.tourn_format.no_of_gameweeks|get_range:1 %}
+          <option value="{{i}}">Gameweek {{i}}</option>
+        {% endfor %}
+      </select></div>
+    </div>
+	<div class="panel-body">
+      <div class="table">
+        <table id = "fixturesListHome" class="table table-striped" align="center">
+		  <tr id="dummyEntryHome" style="display:none">
+			<td id="dateTime"> </td>
+			<td id="team1Logo"> </td>
+			<td id="team1Name" style="text-align:right"></td>
+			<td id="result" style=text-align:center> v </td>
+			<td id="team2Name" style="text-align:left"></td>
+			<td id="team2Logo"></td>
+		  </tr>
+		</table>
+      </div>
+    </div>
+</div>
+<!--<table class="table table-striped" align="center">
+	{% for matches in fixtures %}
+		<tr><td style=text-align:right>{{matches.team1.club.club_name }}</td><td style=text-align:center> v </td><td>{{matches.team2.club.club_name }}</td></tr>
+	{% endfor %}
+</table>-->
+{%endblock%}
+{%block news %}
+<!-- BEGIN of Soccerway widget HTML fragment  -->
+<!-- Personal code for this widget: tXnnvtujnofoisf0j -->
+<iframe src="http://widgets.soccerway.com/widget/free/classic/news/#d=600x400&f=&cbackground=FFFFFF&cheadline=000000&ctext=404040&ctitle=F85F00&cshadow=E8E8E8&tbody_family=Tahoma,sans-serif&tbody_size=9&tbody_weight=normal&tbody_style=normal&tbody_decoration=none&tbody_transform=none&ttitle_family=Impact,sans-serif&ttitle_size=13&ttitle_weight=normal&ttitle_style=normal&ttitle_decoration=none&ttitle_transform=none" width="100%" height="400" scrolling="no" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+<!-- END of Soccerway widget HTML fragment -->
+{%endblock%}
+{%block Points %}
+{% include 'pts_table.html' %}
+{%endblock%}
+
+{%block top_scorer %}
+<a class="twitter-timeline" href="https://twitter.com/hashtag/football" data-widget-id="540366732708577280">#football Tweets</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+{%endblock%}
+
+{%block script%}
+<script type = "text/javascript">
+	$("#selGWHome").change(function() {
+		getFixturesinHome();
+	});
+
+	$("#selGWHome").val("{{gameweek}}");
+	getFixturesinHome();
+
+	function getFixturesinHome() {
+		$.ajax({
+		url : "{% url 'get_fixtures_home' tournament.tourn_format.tourn.tourn_cd tournament.season%}",
+		type: "GET",
+		data : {'gameweek': $("#selGWHome").val()},
+
+		success:function(data)
+		{
+		  $(".fixture").remove();
+		  console.log('test');
+		  if (data.gameweek == $("#selGWHome").val()) {
+			for(var i = 0; i < data.fixtures.length; i++) {
+			  addFixture(data.fixtures[i], i);
+			}
+		  }
+		},
+		error: function(error){
+		  console.log('error' + error);
+		}
+		});
+
+	}
+
+	function addFixture(fixture, i) {
+		var linkScore = "";
+		var tableRow = $("#dummyEntryHome").clone();
+		tableRow.attr("id", fixture.match_id);
+		tableRow.addClass("fixture");
+		team1_logo = "<img class = 'logos' src='/team-logos/"+fixture.team1_logo+"'/>";
+		team2_logo = "<img class = 'logos' src='/team-logos/"+fixture.team2_logo+"'/>";
+		tableRow.find("#dateTime").html(fixture.date);
+		tableRow.find("#team1Logo").html(team1_logo);
+		tableRow.find("#team1Name").html(fixture.team1);
+		tableRow.find("#team2Name").html(fixture.team2);
+		tableRow.find("#team2Logo").html(team2_logo);
+
+		if (fixture.team1Score != 'None') {
+			linkScore = linkScore + "<a href='{% url 'displayMatch' tournament.tourn_format.tourn.tourn_cd tournament.season %}?match_id=" + fixture.match_id +"'>" + fixture.team1Score + "-" + fixture.team2Score;
+			//linkScore = linkScore + "<td id='result' style=text-align:center>" + fixture.team1Score + "-" + fixture.team2Score + "</td>"
+			linkScore = linkScore + "</a>";
+
+			//tableRow.find("#result").html(fixture.team1Score + '-' + fixture.team2Score);
+			tableRow.find("#result").html(linkScore);
+		}
+
+		tableRow.show();
+		$("#fixturesListHome").append(tableRow);
+	}
+
+	$("#home").addClass("active")
+	$("#footopia_menu").removeClass("active")
+	$("#prediction_menu").removeClass("active")
+</script>
+{%endblock script%}

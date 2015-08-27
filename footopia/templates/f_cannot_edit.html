@@ -1,0 +1,21 @@
+{% extends 't_base.html' %}
+{%block content%}
+<br>
+<div class="col-sm-9" style="padding:20px;">
+  <div class="panel panel-default">
+    <div class="panel-body">
+	Cannot edit your team as the deadline for the last gameweek of the tournament has ended. Click <a href="{% url 'footopia_home' tournament.tourn_format.tourn.tourn_cd tournament.season%}">here</a> to view your team
+    </div>
+  </div>
+</div>
+<div class="col-sm-3 pull-right" style="padding:2px;">
+  <div class="panel panel-info" style="padding:0px;">
+    <div class="panel-heading">Points Table</div>
+    <div class="panel-body" style="padding:2px;">
+      <div class="table">
+        {% include 'pts_table.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

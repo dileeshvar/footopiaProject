@@ -1,0 +1,19 @@
+{
+	"gameweek": {{gameweek}},
+	"userPoint": {{userPoint}},
+	"highPoint": {{highPoint}},
+	"avgPoint": {{avgPoint}},
+	"players": [
+		{% for eachplayer in players_with_types %}
+		{
+			"playerName" : "{{eachplayer.0}}",		
+			"playerType" : "{{eachplayer.1}}",
+			"clubName" : "{{eachplayer.2}}",
+			"playerPosition" : "{{eachplayer.3}}",
+			"playerValue" : "{{eachplayer.4}}",
+			"gameweekPt" : "{{eachplayer.5}}",
+			"totalPt" : "{{eachplayer.6}}"
+		}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	]
+}

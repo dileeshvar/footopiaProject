@@ -1,0 +1,62 @@
+{% extends 'league_base.html' %}
+{% load set_val %}
+{%block league_heading%}
+> League Name
+{%endblock%}
+{%block league %}
+<div role="tabpanel" class="col-sm-12" style="padding:2px;">
+  <ul id="tabs" class="nav nav-tabs" role="tablist" data-tabs="tabs">
+    <li class="active"><a href="#field" data-toggle="tab">Home</a></li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="field">
+      <div class="col-sm-6 pull-right">
+        <br>
+        <div class="tab-content">
+          <div class="panel panel-default" style="padding:0px;">
+            <div class="panel-body" style="padding:0px;">
+                  <table class="table table-striped" align="center">
+                    <tr><th>#</th><th>User</th><th>Pts</th></tr>
+                    {% for user_val , points in leader_data %}
+                      {%if forloop.first %}
+                        {%set max_point = points%}
+                      {%endif%}
+                      {%if user_val.id == user.id%}
+                      <tr class ="success"><td>{{ forloop.counter }}</td><td><a href="{% url 'view_user_profile' user_val.id %}">{{user_val.first_name|add:","|add:user_val.last_name}}</a></td><td>{{ points }}</td></tr>
+                      {%set your_rank = forloop.counter %}
+                      {%set your_points = points%}
+                      {%else%}
+                      <tr><td>{{ forloop.counter }}</td><td><a href="{% url 'view_user_profile' user_val.id %}">{{user_val.first_name|add:","|add:user_val.last_name}}</a></td><td>{{ points }}</td></tr>
+                      {%endif%}
+                      {% set total_rank = forloop.counter %}
+                    {% endfor %}
+                  </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 pull-left">
+        <br>
+        <div class="panel panel-primary" style="padding:2px;">
+          <div class="panel-body" align="center" style="padding:2px;">
+                <h4>Rank Within League : <strong>{{your_rank}}/{{total_rank}}</strong></h4>
+                <h4>Highest Points : <strong>{{max_point}}</strong></h4>
+                <h4>Your Points : <strong>{{your_points}}</strong></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+{%endblock%}
+{%block points %}
+{% include 'pts_table.html' %}
+{%endblock%}
+{%block script%}
+<script>
+$('#tabs a').click(function (e) {
+  e.preventDefault();
+  $(this).tab('show');
+});
+</script>
+{%endblock%}

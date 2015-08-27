@@ -1,0 +1,8 @@
+<table class="table table-striped" align="center" style="font-size: 0.8em">
+	<tr><th>#</th><th>User</th><th>Pts</th></tr>
+	{% for userEntry in leaderBoard %}
+		<tr><td>{{ forloop.counter }}</td><td><a href="{% url 'view_user_profile' userEntry.user.id %}">{{userEntry.user.first_name|add:","|add:userEntry.user.last_name}}</a></td><td>{{ userEntry.total_pts }}</td></tr>
+	{% endfor %}
+</table>
+<h5> My points : {{my_points}}</h5>
+<h5> My Rank : {{my_rank}} </h5>

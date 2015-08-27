@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+        {%block navbar%}
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <form class="navbar-form navbar-right" role="form" action="{% url 'django.contrib.auth.views.login' %}" method="post">
+            <div class="form-group">
+              <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+              <input type="password" name="password" class="form-control" placeholder="password" required>
+            </div>
+              &nbsp;<a href="#" data-toggle="modal" data-target="#myModal">forgot your password ?</a>&nbsp;
+            <button type="submit" class="btn btn-default">Login</button>            						
+			
+			{% if form.errors %}
+			<p style="color:red"> Username and Password doesn't match </p>
+			{% endif %}
+
+			<input type="hidden" name="next" value = "{{next}}">
+            {% csrf_token %}
+          </form>
+        {%endblock%}
+    {%block main%}
+     <h1>Footopia</h1> Your Soccer Fantasy World !	 			
+
+		<!-- Modal -->
+		<form class="form-horizontal" role="form" action= "reset" method="post">
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="myModalLabel">Reset Password</h4>
+				  </div>
+				  <div class="modal-body">
+					Enter the registered email id !!
+					<input type="text" name="email" id="emailAddrId"/>
+				  </div>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Reset Password</button>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			{% csrf_token %}
+		</form>
+      <div class="jumbotron">
+      <form class="form-horizontal" role="form" action= "register" method="post">
+        <h2>Sign Up</h2>
+        {% for error in R_form.non_field_errors %}
+        <p style="color: red">
+          {{ error }}
+        </p>
+        {% endfor %}
+        {% for field in R_form.visible_fields %}
+        <div class="form-group">
+            <div class="col-xs-8">
+              {{field}}
+            </div>
+            <div class="col-xs-8">
+              {{field.errors}}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="form-group">
+          <div class="col-sm-8">
+            <button type="submit" name = 'register' class="btn btn-lg btn-primary">Sign Up</button>
+          </div>
+        </div>
+        {% for field in R_form.hidden_fields %}
+          {{field}}
+        {% endfor %}
+        {% csrf_token %}
+      </form>
+    </div><!-- /.jumbotron -->
+    {%endblock%}	

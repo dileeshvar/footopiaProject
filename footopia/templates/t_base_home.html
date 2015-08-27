@@ -1,0 +1,39 @@
+{% extends 't_base.html' %}
+  {%block content%}
+  <br>
+  <div class="col-sm-8 pull-left">
+          {%block fixtures %}
+          {%endblock%}
+  </div>
+  <div class="col-sm-4 pull-right">
+    <div class="panel panel-default">
+      <div class="panel-heading">Points Table</div>
+      <div class="panel-body">
+        <div class="table">
+          {%block Points %}
+          {%endblock%}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-8 pull-left">
+    <div class="panel panel-default">
+      <div class="panel-heading">News</div>
+      <div class="panel-body" align = "center">
+        {%block news %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4 pull-right">
+    <div class="panel panel-default">
+      <div class="panel-heading">Football tweets!</div>
+      <div class="panel-body">
+        <div class="table">
+          {%block top_scorer %}
+          {%endblock%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%endblock%}

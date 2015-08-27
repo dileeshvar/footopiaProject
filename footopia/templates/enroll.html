@@ -1,0 +1,47 @@
+{% extends 't_base.html' %}
+{%block content%}
+<br>
+<div class="col-sm-9" style="padding:20px;">
+  <div class="panel panel-default">
+    <div class="panel-body">
+	Choose your favorite team and click enroll to join <strong>{{game_type}}</strong> for <strong>{{tournament.tourn_format.tourn.tourn_name}}</strong> for the season <em>{{tournament.season}}</em>
+	<form name="enroll-form" action="{% url url_name tournament.tourn_format.tourn.tourn_cd tournament.season %}" method="POST">
+		{% for error in enroll_form.non_field_errors %}
+		<p style="color: red">
+		{{ error }}
+		</p>
+		{% endfor %}
+		{%for field in enroll_form.visible_fields %}
+		  <div class="form-group">
+			<label class="col-md-3 control-label">{{field.label}}</label>
+			<div class="col-md-4 {% if field.errors %}has-error{% endif %}">
+			  {{field}}
+			</div>
+			{% if field.errors %}
+			<div class="col-md-4 has-error">
+			  <label class="control-label">
+				{{field.errors}}
+			  </label>
+			</div>
+			{% endif %}
+		  </div>
+		{% endfor %}
+		<div class="col-md-7 text-center">
+		<button class="btn btn-primary" type="submit">Enroll</button>
+	  </div>
+		{% csrf_token %}
+	</form>
+    </div>
+  </div>
+</div>
+<div class="col-sm-3 pull-right" style="padding:2px;">
+  <div class="panel panel-info" style="padding:0px;">
+    <div class="panel-heading">Points Table</div>
+    <div class="panel-body" style="padding:2px;">
+      <div class="table">
+        {% include 'pts_table.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

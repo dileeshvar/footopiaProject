@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content%}
+{%for i in tournaments%}
+{{i.tourn_name}}
+<form action="createTournament" name="tournament" method="post">
+<tr><th><label for="id_season">Season:</label></th><td><input id="season" maxlength="7" name="season" type="text" /></td></tr>
+{% csrf_token %}
+<input type="submit">
+</form>
+{%endfor%}
+{% endblock %}

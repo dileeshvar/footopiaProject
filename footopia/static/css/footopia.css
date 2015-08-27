@@ -1,0 +1,30 @@
+.pred-text {
+  text-align: center;
+  width: 22px;
+}
+
+.player {
+  cursor: pointer
+}
+
+.hidden {
+   display: none;
+}
+
+.visible {
+   display: block;
+}
+
+.logos {
+   height : 30px;
+   width : 30px;
+}
+
+.logos-prediction {
+   height : 80px;
+   width : 80px;
+}
+
+.disabled-text-field {
+  background-color : #d1d1d1;
+}

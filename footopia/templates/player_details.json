@@ -1,0 +1,12 @@
+{ "player_stats": [
+	{% for entry in player_stats %}
+		{"player_name" : "{{entry.squad.player.player_name}}",
+		"team_name" : "{{entry.squad.player.current_club.club_name}}",
+		"position" : "{{entry.squad.player.player_type}}",
+		"minutes_played" : "{{entry.total_mins_played}}", 
+		"goals_scored" : "{{entry.total_goals}}",
+		"yellow_cards" : "{{entry.total_yellow_cards}}",
+		"red_cards" : "{{entry.total_red_cards}}",
+		"player_rating" : "{{entry.player_rating}}"}{% if not forloop.last %},{% endif %}
+	{% endfor %}
+]}

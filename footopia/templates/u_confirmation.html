@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{%block main%}
+<h1>Footopia</h1> Your Soccer Fantasy World !	
+<br>
+
+<div class="jumbotron">	
+	A confirmation email has been sent to {{email}}.  Please click the link
+in that email to confirm your email address and 
+
+{% if initiator = 'Registration' %}
+complete your registation for footopia.
+{% else %}
+complete the reset password.
+{% endif %}
+</div>	
+{%endblock%}

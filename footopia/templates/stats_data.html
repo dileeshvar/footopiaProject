@@ -1,0 +1,156 @@
+{% extends 'stats_home.html' %} 
+{%block data_frame %}
+<div id="statistics_table">
+	<table class="top_scorers table table-striped" align="center" style="font-size: 0.8em">
+		<tr><th>#</th><th>Player Name</th><th>Team</th><th>Minutes Played</th><th>Goals Scored</th><th>Rate of Scoring</th></tr>
+		{% for entry in top_scorers %}
+			<tr><td>{{ forloop.counter }}</td><td> {{entry.squad.player.player_name}}</td><td>{{entry.squad.player.current_club.club_name}}</td><td>{{entry.total_mins_played}}</td><td>{{entry.total_goals}}</td><td>{{entry.avg_rate_of_scoring}}</td></tr>
+		{% endfor %}
+	</table>
+</div>
+{%endblock%}
+{%block selection_frame %}
+<div id="statistics_titles">
+	<ul>
+		<li> <a href = "#" onclick="toggle_topscorer_stats()"> Top scorers </a></li>
+		<li> <a href = "#" onclick="toggle_all_player_stats()"> View all player statistics </a></li>
+		<li> <a href = "#" onclick="toggle_best_team()"> Best Team </a></li>
+		<li> <a href = "#" onclick="toggle_hot_players_stats()"> Hot prospects of last gameweek </a></li>
+	</ul>
+</div>
+{%endblock selection_frame %}
+
+{% block script %}
+<script type = "text/javascript">
+	function toggle_topscorer_stats() {
+		get_top_scorers();
+	}
+	
+	function toggle_all_player_stats() {
+		get_all_players();
+	}
+	
+	function toggle_hot_players_stats() {
+		get_best_players_of_gameweek();
+	}
+	
+	function toggle_best_team() {
+		get_best_players();
+	}
+	
+	function get_best_players_of_gameweek() {
+		$.ajax({
+			url : "{% url 'stats_best_players' tournament.tourn_format.tourn.tourn_cd tournament.season %}",
+			type: "GET",
+			success:function(response) 
+			{
+				$("#statistics_table").empty();
+				var player = response.best_players;
+				var gameweek = response.gameweek;
+				$div = $("#statistics_table");
+				var $table = "<p> Gameweek - " + gameweek + "</p><table class='all_players table table-striped' align='center' style='font-size: 0.8em'><tr><th>#</th><th>Player Name</th><th>Team</th><th>Postion</th><th>Minutes Played</th><th>Goals Scored</th><th>Yellow Cards</th><th>Red Cards</th><th>Points</th></tr>";
+				var player_rec = "";
+				for(var i = 0; i < player.length; i++) {
+					player_rec = player_rec + "<tr><td>"+(i+1)+"</td><td>"+ player[i].player_name+"</td><td>"+player[i].team_name+"</td><td>"+player[i].position+"</td><td>"+player[i].minutes_played+"</td><td>"+player[i].goals_scored+"</td>";
+					
+					yellow_card = "<td>";
+					if (player[i].yellow_cards == "True") {
+						yellow_card = yellow_card + "<img src='/static/images/yellowCard.png' alt='yellowCard' height='10' width='8'/>";
+					} else {
+						yellow_card = yellow_card + "-";
+					}
+					yellow_card = yellow_card + "</td>";
+					
+					red_card = "<td>";
+					if (player[i].red_cards == "True") {
+						red_card = red_card + "<img src='/static/images/redCard.png' alt='redCard' height='10' width='8' />";
+					} else {
+						red_card = red_card + "-";
+					}
+					red_card = red_card + "</td>";
+					
+					player_rec = player_rec + yellow_card + red_card + "<td>"+player[i].points+"</td></tr>";
+				}
+				$table = $table + player_rec;
+				$table = $table + "</table>";
+				$div.append($table);
+			},
+			error: function(error){
+				console.log('error' + error);
+			}
+		});
+	}
+	
+	function get_top_scorers() {
+		$.ajax({
+			url : "{% url 'stats_top_scorers' tournament.tourn_format.tourn.tourn_cd tournament.season %}",
+			type: "GET",
+			success:function(response) 
+			{
+				$("#statistics_table").empty();
+				var player = response.top_scorers;
+				$div = $("#statistics_table");
+				var $table = "<table class='top_scorers table table-striped' align='center' style='font-size: 0.8em'><tr><th>#</th><th>Player Name</th><th>Team</th><th>Minutes Played</th><th>Goals Scored</th><th>Rate of Scoring</th></tr>";
+				var player_rec = "";
+				for(var i = 0; i < player.length; i++) {
+					player_rec = player_rec + "<tr><td>"+(i+1)+"</td><td>"+ player[i].player_name+"</td><td>"+player[i].team_name+"</td><td>"+player[i].minutes_played+"</td><td>"+player[i].goals_scored+"</td><td>"+player[i].scoring_rate+"</td></tr>";
+				}
+				$table = $table + player_rec;
+				$table = $table + "</table>";
+				$div.append($table);
+			},
+			error: function(error){
+				console.log('error' + error);
+			}
+		});
+	}
+	
+	function get_all_players() {
+		$.ajax({
+			url : "{% url 'stats_all_players' tournament.tourn_format.tourn.tourn_cd tournament.season %}",
+			type: "GET",
+			success:function(response) 
+			{
+				$("#statistics_table").empty();
+				var player = response.player_stats;
+				console.log(player.length);
+				$div = $("#statistics_table");
+				var $table = "<table class='all_players table table-striped' align='center' style='font-size: 0.8em'><tr><th>#</th><th>Player Name</th><th>Team</th><th>Postion</th><th>Minutes Played</th><th>Goals Scored</th><th>Yellow Cards</th><th>Red Cards</th><th>Player Rating</th></tr>";
+				var player_rec = "";
+				for(var i = 0; i < player.length; i++) {
+					player_rec = player_rec + "<tr><td>"+(i+1)+"</td><td>"+ player[i].player_name+"</td><td>"+player[i].team_name+"</td><td>"+player[i].position+"</td><td>"+player[i].minutes_played+"</td><td>"+player[i].goals_scored+"</td><td>"+player[i].yellow_cards+"</td><td>"+player[i].red_cards+"</td><td>"+player[i].player_rating+"</td></tr>";
+				}
+				$table = $table + player_rec;
+				$table = $table + "</table>";
+				$div.append($table);
+			},
+			error: function(error){
+				console.log('error' + error);
+			}
+		});
+	}
+	
+	function get_best_players() {
+		$.ajax({
+			url: "{% url 'get_best_team' tournament.tourn_format.tourn.tourn_cd tournament.season %}",
+			type: "GET", 
+			success: function(response) {
+				$("#statistics_table").empty();
+				$div = $("#statistics_table");
+				var fieldView = "<div class='bg' style='background-size: 100%;'> {% include 'team_player_view.html' with divid='g1' %}{% include 'team_player_view.html' with divid='d1' %}{% include 'team_player_view.html' with divid='d2' %}{% include 'team_player_view.html' with divid='d3' %}{% include 'team_player_view.html' with divid='d4' %}{% include 'team_player_view.html' with divid='m1' %}{% include 'team_player_view.html' with divid='m2' %}{% include 'team_player_view.html' with divid='m3' %}{% include 'team_player_view.html' with divid='m4' %}{% include 'team_player_view.html' with divid='f1' %}{% include 'team_player_view.html' with divid='f2' %}</div></div>";
+				$div.append(fieldView);
+				for(var i = 0; i < response.players.length; i++) {
+				  addPlayer(response.players[i]);
+				}
+			},
+			error: function(error) {
+			}
+		})
+	}
+	
+	function addPlayer(player, i) {
+		var playerContent = $("#"+player.playerType);
+		playerContent.find(".player-name").text(player.playerName+" "+player.playerRating);
+	} 
+</script>
+{% endblock %}

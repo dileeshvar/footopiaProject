@@ -1,0 +1,68 @@
+{% extends 'f_team.html' %}
+{% block form_content %}
+<form name="createForm" method="POST" action="{% url 'create_team' tournament.tourn_format.tourn.tourn_cd tournament.season %}">
+{{create_team_form.errors}}
+{{create_team_form}}<br/>
+{% csrf_token %}
+<button class="btn btn-primary btn-submit" type="submit" disabled>Submit Team</button>
+</form>
+{% endblock %}
+
+{% block info %}
+<div class="alert alert-info" role="alert">
+The created team will be available from Gameweek <strong>{{gameweek}}</strong>. <br/>
+Please confirm your team by <strong>{{lock_date|date:'m-d-Y H:i'}}</strong> to start by Gameweek <strong>{{gameweek}}</strong>.
+</div>
+<div id="alertBox" class="alert alert-danger" role="alert" style="display:none">
+</div>
+{% endblock %}
+
+{% block select_player_script %}
+function selectPlayer(pid, ptype, pname, cost, clubName) {
+  $errorSec = $("#alertBox");
+  var arr = players[ptype];
+  var empty = -1;
+  for (var i = arr.length - 1; i >= 0; i--) {
+    if (arr[i] == '') {
+	  empty = i;
+	}
+	if (arr[i].indexOf(pid + ":") == 0) {
+	  $errorSec.text("Player already selected");
+	  $errorSec.show();	  
+	  return false;
+	}
+  }
+  if (empty != -1) {
+    if (cost > parseFloat($("#available-budget").text())) {
+	  $errorSec.text("Not enough budget to select the player");
+	  $errorSec.show();	  
+	  return false;
+	}
+    arr[empty] = pid + ":" + pname + ":" + cost + ":" + clubName;
+	$errorSec.hide();
+	return true;
+  }
+  $errorSec.text('Already selected ' + arr.length + ' ' + ptype + 's');
+  $errorSec.show();  
+  return false;
+}
+
+function updateForm() {
+  for (var i = 0; i < key.length; i++) {
+    var arr = players[key[i]];
+	var crId = '#' + formidPref[i];
+	for (var j = 0; j < arr.length; j++) {
+	  var $createFormEle = $(crId + (j + 1));
+	  parr = arr[j].split(':');
+      pid = parr[0];
+	  $createFormEle.val(pid);
+	}
+  }
+  return false;
+}
+{% endblock %}
+
+{% block extra_script %}
+$('.remove-btn').prop('disabled', true);
+$('.remove-btn-data').prop('disabled', true);
+{% endblock %}

@@ -1,0 +1,268 @@
+{% extends 'f_team_base.html' %}
+{%block budget %}
+<div class="col-sm-12 row" style="padding-top:15px;">
+  <div class="col-sm-4">
+  <div class="panel panel-primary" style="padding:3px;">
+    <div class="panel-body" align="center" style="padding:5px;">
+      <h2>$100.0</h2>
+      <p>Total Budget</p>
+    </div>
+  </div>
+  </div>
+  <div class="col-sm-4">
+  <div class="panel panel-primary" style="padding:3px;">
+    <div class="panel-body" align="center" style="padding:5px;">
+      <h2>$<span id="current-cost">0.0<span></h2>
+      <p>Current Cost</p>
+    </div>
+  </div>
+  </div>
+  <div class="col-sm-4">
+  <div class="panel panel-primary" style="padding:3px;">
+    <div class="panel-body" align="center" style="padding:5px;">
+      <h2>$<span id="available-budget">100.0<span></h2>
+      <p>Available Budget</p>
+    </div>
+  </div>
+  </div>
+</div>
+{% block info %}
+{%endblock%}
+{% block form_error %}
+{%endblock%}
+{%endblock%}
+{%block team_selection %}
+<div role="tabpanel" class="tab-pane active" id="field">
+  <div class="bg" style="background-size: 100%;">
+    {% include 'edit_player_view.html' with divid='g1' %}
+	{% include 'edit_player_view.html' with divid='d1' %}
+    {% include 'edit_player_view.html' with divid='d2' %}
+	{% include 'edit_player_view.html' with divid='d3' %}
+	{% include 'edit_player_view.html' with divid='d4' %}
+	{% include 'edit_player_view.html' with divid='m1' %}
+    {% include 'edit_player_view.html' with divid='m2' %}
+	{% include 'edit_player_view.html' with divid='m3' %}
+	{% include 'edit_player_view.html' with divid='m4' %}
+	{% include 'edit_player_view.html' with divid='f1' %}
+	{% include 'edit_player_view.html' with divid='f2' %}
+  </div>
+</div>
+<div role="tabpanel" class="tab-pane" id="data">
+  <br>
+  <table class="table table-striped">
+    <thead>
+      <tr style="font-weight:bold" align="center">
+		<td/>
+        <td>Player Name</td>        
+		<td>Club Name</td>    
+		<td>Position</td>
+		<td>$</td>        
+      </tr>
+    </thead>
+    <tbody>      
+	  {% include 'edit_player_data_view.html' with trid='dg1' %}
+	  {% include 'edit_player_data_view.html' with trid='dd1' %}
+	  {% include 'edit_player_data_view.html' with trid='dd2' %}
+	  {% include 'edit_player_data_view.html' with trid='dd3' %}
+	  {% include 'edit_player_data_view.html' with trid='dd4' %}
+	  {% include 'edit_player_data_view.html' with trid='dm1' %}
+	  {% include 'edit_player_data_view.html' with trid='dm2' %}
+	  {% include 'edit_player_data_view.html' with trid='dm3' %}
+	  {% include 'edit_player_data_view.html' with trid='dm4' %}
+	  {% include 'edit_player_data_view.html' with trid='df1' %}
+	  {% include 'edit_player_data_view.html' with trid='df2' %}
+    </tbody>
+  </table>
+</div>
+
+{% block form_content %}
+{% endblock %}
+{%endblock%}
+{%block player_selector %}
+<form id="player-filter-form">
+{{player_filter_form}}
+</form>
+{%endblock%}
+{%block player_list %}
+<table id = "playerList" class="table table-striped" align="center" style="font-size: 0.8em">
+	<tr><th>Name</th><th>Pos</th><th>Team</th><th>Cost</th><th>Pts</th></tr>
+	<tr id="dummyEntry" style="display:none">
+	<td id="name"></td>
+	<td id="type"></td>
+	<td id="team"></td>
+	<td id="cost"></td>
+	<td id="pts"></td>
+	<td id="teamName" style="visibility:collapse"></td>
+	</tr>
+</table>
+{%endblock%}
+{%block script%}
+<script>
+$('#tabs a').click(function (e) {
+  e.preventDefault();
+  $(this).tab('show');
+});
+$('.player-filter').change(function(e) {
+  loadPlayers();
+});
+loadPlayers();
+function loadPlayers() {
+  $.ajax({
+    url : "{% url 'get_players' tournament.tourn_format.tourn.tourn_cd tournament.season%}",
+	type: "GET",
+	data : $("#player-filter-form").serializeArray(),
+	success:function(data)
+	{
+	  $("#playerList .player").remove();
+      for (var i = 0; i < data.length; i++) {
+	    addPlayer(data[i]);
+	  }
+	},
+	error: function(error){
+	  console.log('error' + error);
+	}
+  });
+}
+
+function addPlayer(player) {
+  var tableRow = $("#dummyEntry").clone();
+  tableRow.attr("id", player.id + "-" + player.type);
+  tableRow.addClass("player");
+  tableRow.find("#name").html(player.name);
+  tableRow.find("#type").html(player.type);
+  tableRow.find("#team").html(player.team_cd);
+  tableRow.find("#cost").html(player.cost);
+  tableRow.find("#pts").html(player.pts);  
+  tableRow.find("#teamName").html(player.team_name);
+  tableRow.show();
+  $("#playerList").append(tableRow);
+}
+
+var players = {
+  'GK': [''],
+  'DF': ['', '', '', ''],
+  'MF': ['', '', '', ''],
+  'ST': ['', '']
+};
+
+var key = ['GK', 'DF', 'MF', 'ST'];
+var idPref = ['g', 'd', 'm', 'f'];
+var formidPref = ['id_gk', 'id_df', 'id_mf', 'id_st'];
+
+$(document).on("click", ".player", function() {
+  arr = $(this).attr("id").split("-");
+  pid = arr[0];
+  ptype = arr[1];  
+  pname = $(this).find("#name").text();
+  cost = $(this).find("#cost").text();
+  tname = $(this).find("#teamName").text();
+  
+  if (selectPlayer(pid, ptype, pname, cost, tname)) {
+    refreshPlayers();
+  }
+});
+
+$(document).on("click", ".remove-btn", function() {
+  var $ele = $(this).closest(".player-field");
+  var idx = $ele.attr('id');
+  var idPre = idx.charAt(0);
+  var cnt = idx.charAt(1) - 1;
+  var arr = players[key[idPref.indexOf(idPre)]];
+  arr[cnt] = '';
+  refreshPlayers();
+});
+
+$(document).on("click", ".remove-btn-data", function() {
+  var $ele = $(this).closest(".player-field-data");
+  var idx = $ele.attr('id');
+  var idPre = idx.charAt(1);
+  var cnt = idx.charAt(2) - 1;
+  var arr = players[key[idPref.indexOf(idPre)]];
+  arr[cnt] = '';
+  refreshPlayers();
+});
+
+function resetTeam(){
+	
+	for (var i = 0; i < key.length; i++) {
+		players[key[i]] = existingPlayers[key[i]].slice(0);
+	}
+	
+	refreshPlayers();	
+	disableWildCard();
+}
+
+function refreshPlayers() {
+  var disabled = false;
+  var tcost = 0;  
+  var pcost = 0;
+  for (var i = 0; i < key.length; i++) {
+  	
+    var arr = players[key[i]];
+	var id = "#" + idPref[i];	
+	//var crId = '#' + formidPref[i];
+	for (var j = 0; j < arr.length; j++) {
+	  var $ele = $(id + (j + 1));
+	  var tempNo = j+1;	  
+	  
+	  var $ele_data = $(id.substring(0,1) + 'd' + id.substring(1) + tempNo);	  
+	  
+	  //var $createFormEle = $(crId + (j + 1));
+	  
+	  if (arr[j] == '') {		
+	    $ele.find('.remove-btn').prop('disabled', true);
+		$ele.find('.player-name').text('No selection');
+		$ele_data.find('.remove-btn-data').prop('disabled', true);		
+		$ele_data.find('.player-name').text('No selection');
+		$ele_data.find('.price-value').text('');
+		$ele_data.find('.position-name').text('');
+		$ele_data.find('.club-name').text('');
+		
+		//$createFormEle.val('');
+		disabled = true;
+	  } else {
+	    $ele.find('.remove-btn').prop('disabled', false);
+		$ele_data.find('.remove-btn-data').prop('disabled', false);
+		parr = arr[j].split(':');
+		pid = parr[0];
+		pname = parr[1];
+		pcost = parseFloat(parr[2]);
+		teamNam = parr[3];
+		tcost += parseFloat(parr[2]);
+		$ele.find('.player-name').text("[" + pname + "," + pcost + "]");
+		$ele_data.find('.player-name').text(pname);	
+		$ele_data.find('.price-value').text(pcost);
+		$ele_data.find('.position-name').text(key[i]);
+		$ele_data.find('.club-name').text(teamNam);
+				
+		//$createFormEle.val(pid);
+	  }
+	}
+  }
+  $errorSec = $("#alertBox");    
+  $errorSec.hide();
+  if (!disabled) {
+    disabled = updateForm();
+  }
+  $('#current-cost').text(tcost.toFixed(1));
+  var avl = 100 - tcost;
+  $('#available-budget').text(avl.toFixed(1));
+  $('.btn-submit').prop('disabled', disabled);          
+}
+
+function disableWildCard(){
+	  var noOfWildCards = {{remaining.1}}
+	  if(noOfWildCards == '0'){		
+		$('#useWildcardId').prop('disabled',true);
+	  }else{
+		$('#useWildcardId').prop('disabled',false);
+	  }
+  }
+
+{% block select_player_script %}
+{% endblock %}
+
+{% block extra_script %}
+{% endblock %}
+</script>
+{%endblock%}

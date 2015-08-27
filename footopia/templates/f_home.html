@@ -1,0 +1,139 @@
+{% extends 'f_base_home.html' %}
+{% load cust_tags %}
+{%block leader %}
+{% include 'leaderboard.html' %}
+{%endblock%}
+{%block trend %}
+<div class="col-md-8 col-md-offset-2" style="padding:2px;">
+<select id="selGWFoot" name='gameweek' class="form-control" style="height: 50px; font-weight:bold;font-size:30px;">
+{% for i in gw_cnt|get_range:first_gw %}
+  <option value="{{i}}">Gameweek {{i}}</option>
+{% endfor %}
+</select>
+</div>
+<div class="col-sm-12 row" style="padding-top:15px;">
+	<div class="col-sm-4">
+	  <div class="panel panel-primary" style="padding:3px;">
+		<div class="panel-body" align="center" style="padding:5px;">
+		  <h2 id="myPointsId">0</h2>
+		  <p>My Points</p>
+		</div>
+	  </div>
+  </div>
+  <div class="col-sm-4">
+	  <div class="panel panel-primary" style="padding:3px;">
+		<div class="panel-body" align="center" style="padding:5px;">
+		  <h2 id="highestPointsId">0</h2>
+		  <p>Highest Points</p>
+		</div>
+	  </div>
+  </div>
+  <div class="col-sm-4">
+	  <div class="panel panel-primary" style="padding:3px;">
+		<div class="panel-body" align="center" style="padding:5px;">
+		  <h2 id="averagePointsId">0</h2>
+		  <p>Average Points</p>
+		</div>
+	  </div>
+  </div>
+</div>
+{%endblock%}
+{%block my_team %}
+<div role="tabpanel" class="tab-pane active" id="field">
+  <br>
+  <br>
+  <div class="bg" style="background-size: 100%;">
+    {% include 'team_player_view.html' with divid='g1' %}
+	{% include 'team_player_view.html' with divid='d1' %}
+    {% include 'team_player_view.html' with divid='d2' %}
+	{% include 'team_player_view.html' with divid='d3' %}
+	{% include 'team_player_view.html' with divid='d4' %}
+	{% include 'team_player_view.html' with divid='m1' %}
+    {% include 'team_player_view.html' with divid='m2' %}
+	{% include 'team_player_view.html' with divid='m3' %}
+	{% include 'team_player_view.html' with divid='m4' %}
+	{% include 'team_player_view.html' with divid='f1' %}
+	{% include 'team_player_view.html' with divid='f2' %}
+  </div>
+</div>
+<div role="tabpanel" class="tab-pane" id="data">
+  <br>
+  <table class="table table-striped">
+    <thead>
+      <tr style="font-weight:bold" align="center">
+        <td>Player Name</td>
+        <td>Team Name</td>
+		<td>Position</td>
+		<td>$</td>
+        <td>GS</td>
+        <td>TS</td>
+      </tr>
+    </thead>
+    <tbody>
+	  {% include 'team_player_data_view.html' with trid='dg1' %}
+	  {% include 'team_player_data_view.html' with trid='dd1' %}
+	  {% include 'team_player_data_view.html' with trid='dd2' %}
+	  {% include 'team_player_data_view.html' with trid='dd3' %}
+	  {% include 'team_player_data_view.html' with trid='dd4' %}
+	  {% include 'team_player_data_view.html' with trid='dm1' %}
+	  {% include 'team_player_data_view.html' with trid='dm2' %}
+	  {% include 'team_player_data_view.html' with trid='dm3' %}
+	  {% include 'team_player_data_view.html' with trid='dm4' %}
+	  {% include 'team_player_data_view.html' with trid='df1' %}
+	  {% include 'team_player_data_view.html' with trid='df2' %}
+    </tbody>
+  </table>
+</div>
+{%endblock%}
+{%block points %}
+{% include 'pts_table.html' %}
+{%endblock%}
+{%block script%}
+<script type = "text/javascript">
+$("#selGWFoot").change(function() {
+getTeamDetails();
+});
+$("#selGWFoot").val("{{gameweek}}");
+getTeamDetails();
+
+{% if not team_exists %}
+$("#selGWFoot").prop("disabled", true);
+{% endif %}
+
+function getTeamDetails() {
+  $.ajax({
+    url : "{% url 'get_teamdetails' tournament.tourn_format.tourn.tourn_cd tournament.season%}",
+  type: "GET",
+  data : {'gameweek': $("#selGWFoot").val()},
+  success:function(data)
+  {
+    if (data.gameweek == $("#selGWFoot").val()) {
+
+		$("#myPointsId").text(data.userPoint)
+		$("#highestPointsId").text(data.highPoint)
+		$("#averagePointsId").text(data.avgPoint)
+
+		for(var i = 0; i < data.players.length; i++) {
+		  addPlayer(data.players[i]);
+		}
+    }
+  },
+  error: function(error){
+    console.log('error' + error);
+  }
+  });
+}
+function addPlayer(player, i) {
+  var playerContent = $("#"+player.playerType);
+  playerContent.find(".player-name").text("[" + player.playerName + "," + player.gameweekPt + "]");
+
+  var playerDataContent = $("#d" + player.playerType);
+  playerDataContent.find(".player-name").text(player.playerName);
+  playerDataContent.find(".team-name").text(player.clubName);
+  playerDataContent.find(".position-name").text(player.playerPosition);
+  playerDataContent.find(".price-value").text(player.playerValue);
+  playerDataContent.find(".gs-name").text(player.gameweekPt);
+  playerDataContent.find(".ts-name").text(player.totalPt);
+}
+</script>
+{% endblock %}

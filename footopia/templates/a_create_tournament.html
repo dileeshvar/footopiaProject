@@ -1,0 +1,174 @@
+{% extends "a_base_home.html" %}
+{% block create_tournament%}
+	<form action="createTournamentBase" name="tournamentform" method="post">
+	<table>
+	{{tournamentform}}
+	<tr><th><label for="id_game_week_cycle">Game Week Cycle:</label></th><td><input id="game_week_cycle" maxlength="3" name="game_week_cycle" type="text" required /></td></tr>
+	</table>
+	{% csrf_token %}
+	<input type="submit"> <button value="clear">Clear</button>
+	</form>
+{% endblock create_tournament %}
+
+{% block create_season %}
+	<h3>Tournaments</h3>
+	{%for i in tournaments%}
+		{{i.tourn_name}}
+		
+		<form action="createTournament" name="tournament" method="post">
+			<table class="table table-striped ">
+			{% for field in create_Tournament_Form %}
+				<tr><td>{{field.label}}</td><td>{{field.errors}}{{field}}</td></tr>
+			{% endfor %}
+			<tr><td></td><td><input type="submit"><button type="reset">Clear</button></td></tr>
+			</table>
+			<!--<tr><th><label for="id_season">Season:</label></th><td><input id="season" maxlength="7" name="season" type="text" /></td></tr>
+			{{create_Tournament_Form}}
+			<input type="submit">-->
+			<input type="hidden" name="tournamentname" value="{{i.tourn_name}}" >
+			{% csrf_token %}
+			
+		</form>
+	{%endfor%}
+{% endblock create_season %}
+
+{% block view_tournaments %}
+<h3>Seasons</h3>
+<table>
+	{%for i in seasons%}
+		<tr>
+			<td>{{i.tourn_name}}</td><td>&nbsp;&nbsp;-&nbsp;&nbsp;</td><td>{{i.season}}</td>
+			{%for j in games%}
+				{%if j.tourn_id == i.id%}
+					<td>{{j.game_type}}</td>
+				{%endif%}
+			{%endfor%}
+		</tr>
+	{%endfor%}
+</table>
+{% endblock view_tournaments %}
+
+{%block player_price %}
+	<form action="{% url 'update_price' %}" name="price_form" method="post">
+		<table class="table table-striped ">
+		{% for field in Player_Form.visible_fields %}
+			<tr><td>{{field.label}}</td><td>{{field.errors}}{{field}}<td></tr>
+		{% endfor %}
+ 		<tr><td></td><td><input type="submit"><button type="reset">Clear</button></td></tr>
+		</table>
+		{% csrf_token %}
+	</form>
+{%endblock%}
+
+{%block pull_data %}
+	<div id = "status">
+	</div>
+	<table class="table table-striped ">
+	{% for field in Get_Data_Form.visible_fields %}
+			<tr><td>{{field.label}}</td><td>{{field.errors}}{{field}}<td></tr>
+	{% endfor %}
+	<tr><td></td><td><input type="button" value="Get data from API" id="pull_data" /></td></tr>
+	</table>
+{%endblock%}
+
+{%block script%}
+<script type = "text/javascript">
+$("#selTourn").change(function() {
+  if ($("#selTourn").val() == -1) {
+	$("#selTeam").empty();
+	$("#selTeam").append("<option value='1'>----</option>");
+	$("#selPlayer").empty();
+	$("#selPlayer").append("<option value='1'>----</option>");
+  } else {
+	getTeams();
+  }
+});
+
+$("#selTeam").change(function() {
+  if ($("#selTeam").val() == -1) {
+	$("#selPlayer").empty();
+	$("#selPlayer").append("<option value='-1'>----</option>");
+  } else {
+	getPlayers();
+  }
+});
+
+$("#pull_data").click(function() {
+  var tourn = $("#getDataTourn").val()
+  pullData(tourn);
+});
+
+function getTeams() {
+  $.ajax({
+    url : "{% url 'get_tournament_teams' %}",
+	type: "GET",
+	data : {'tournament': $("#selTourn").val()},
+	success:function(data)
+	{
+		teams = data.teams;
+		var select1 = document.getElementById("selTeam");
+		$("#selTeam").empty();
+		$("#selTeam").append("<option value='-1'>----</option>");
+		for(var i = 0; i < teams.length; i++) {
+		  var option = document.createElement('option');
+		  option.text = teams[i].name;
+		  option.value = teams[i].id;
+		  select1.add(option);
+		} 
+	},
+	error: function(error){
+	  console.log('error' + error);
+	}
+  });
+}
+
+function getPlayers() {
+  $.ajax({
+    url : "{% url 'get_team_players' %}",
+	type: "GET",
+	data : {'team': $("#selTeam").val()},
+	success:function(data)
+	{
+		players = data.players;
+		var select2 = document.getElementById("selPlayer");
+		$("#selPlayer").empty();
+		for(var i = 0; i < players.length; i++) {
+		  var option = document.createElement('option');
+		  option.text = players[i].name + " - $" +players[i].price;
+		  option.value = players[i].id;
+		  select2.add(option);
+		} 
+	},
+	error: function(error){
+	  console.log('error' + error);
+	}
+  });
+}
+
+function pullData(tourn){
+	$.ajax({
+		url: "{% url 'pull_data'%}",
+		type : "GET",
+		data : {'req_tourn':tourn},
+		success:function(data)
+		{
+			$status = $("#status");
+			$status.empty();
+			console.log(data.status);
+			if (data.status == "success") {
+				status = "<div class='alert alert-success alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>Pulling data for the given tournament. The job is added to queue and the data will be added eventually.</div>";
+			} else {
+				status = "<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>Error queuing the task. Try with correct tournament name.</div>";
+			}
+			$status.append(status);
+		},
+		error:function(error){
+			console.log('error' + error);
+		}
+	});
+}
+
+
+
+</script>
+{%endblock%}

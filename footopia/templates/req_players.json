@@ -1,0 +1,12 @@
+{
+	"players":[
+		{% for player in players %}
+		{
+			"name" : "{{player.player.player_name}}",
+			"id" : "{{player.player.id}}",
+			"price" : "{{player.current_cost}}"
+		}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	]
+	
+}

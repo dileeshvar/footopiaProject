@@ -1,0 +1,6 @@
+<table class="table table-striped" align="center" style="font-size: 0.8em">
+	<tr><th>#</th><th>Team</th><th>Pld</th><th>Pts</th></tr>
+	{% for team in standings %}
+		<tr><td>{{ forloop.counter }}</td><td>{{team.team.club.club_name}}</td><td>{{ team.played }}</td><td>{{ team.points }}</td></tr>
+	{% endfor %}
+</table>

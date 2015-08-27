@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+    {%block navbar%}
+    <ul class="nav navbar-nav pull-right">
+      <li class="active"><a href="{% url 'home' %}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.username}} <span class="caret"></span></a>
+        <ul class="dropdown-menu pull-right" role="menu">
+          <li><a href="{% url 'view_user_profile' user.id %}">My Profile</a></li>
+        </ul>
+      </li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+    {%endblock%}
+    {%block main%}
+    <div class="col-sm-5 pull-left">
+      <h2>Tournaments</h2>
+      <div class="panel panel-default">
+        <div class="panel-body">
+        <table class="table table-striped table-bordered" align="center">
+          <tr class="main">
+            <th>Tournament</th>
+            <th>Footopia</th>
+            <th>Prediction</th>
+          </tr>
+          {% for tournament in tournaments %}
+            <tr>
+              <td style=text-align:left><a href="{% url 'view_tournament' tournament.0.tourn_format.tourn_id tournament.0.season  %}">{{tournament.0.tourn_name }}</a></td>
+              <td style=text-align:center>
+			  {% if tournament.1 %}
+			  <a href="{% url 'footopia_home' tournament.0.tourn_format.tourn_id tournament.0.season  %}"><button class="btn btn-default btn-sm">Go</button></a>
+			  {% else %}
+			  <a href="{% url 'join_footopia' tournament.0.tourn_format.tourn_id tournament.0.season  %}"><button class="btn btn-default btn-sm">Join</button></a>
+			  {% endif %}
+			  </td>
+			  <td style=text-align:center>
+			  {% if tournament.2 %}
+			  <a href="{% url 'predict_home' tournament.0.tourn_format.tourn_id tournament.0.season  %}"><button class="btn btn-default btn-sm">Go</button></a>
+			  {% else %}
+			  <a href="{% url 'join_prediction' tournament.0.tourn_format.tourn_id tournament.0.season  %}"><button class="btn btn-default btn-sm">Join</button></a>
+			  {% endif %}
+			  </td>
+              </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    </div>
+    <div class="col-sm-7 pull-right">
+      <h2>Dashboard</h2>
+      <div class="panel panel-default">
+        <div class="panel-body">
+        <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+          <li class="main active"><a href="#" onclick="toggle_upcoming_games();" data-toggle="tab">Upcoming Games</a></li>
+          <li class="main"><a href="#" onclick="toggle_footopia_stats();" data-toggle="tab">Footopia Stats</a></li>
+          <li class="main"><a href="#" onclick="toggle_prediction_stats();" data-toggle="tab">Predictions Stats</a></li>
+        </ul>
+		<br>
+		<br>
+		<div class="fixturesListTable">
+		<table id = "fixturesListHome" class="table table-striped" align="center">
+		  <tr id="dummyEntryHome" style="display:none">
+			<td id="dateTime"> </td>
+			<td id="team1Logo"> </td>
+			<td id="team1Name" style="text-align:right"></td>
+			<td id="result" style=text-align:center> v </td>
+			<td id="team2Name" style="text-align:left"></td>
+			<td id="team2Logo"></td>
+		  </tr>
+		</table>
+		</div>
+		<div class="prediction_charts d3_charts hidden" >
+			<select id="selTourn_prediction" class="form-control">
+				<option value="">Select Tournament</option>
+				{% for i in tournaments %}
+					{% if i.2 %}
+						<option value="{{i.0.tourn_format.tourn.tourn_cd}}+{{i.0.season}}">{{i.0}} : {{i.0.season}}</option>
+					{% endif %}
+				{% endfor %}
+		    </select>
+			<br>
+			<br>
+			<div class="prediction_chart">
+			</div>
+		</div>
+		<div class="footopia_charts d3_charts hidden" >
+			<select id="selTourn_footopia" class="form-control">
+				<option value="">Select Tournament</option>
+				{% for i in tournaments %}
+					{% if i.1 %}
+					  <option value="{{i.0.tourn_format.tourn.tourn_cd}}+{{i.0.season}}">{{i.0}} : {{i.0.season}}</option>
+					{% endif %}
+				{% endfor %}
+		    </select>
+			<br>
+			<br>
+			<div class="footopia_chart">
+			</div>
+		</div>
+      </div>
+      </div>
+    </div>
+{%endblock %}
+{%block script%}
+	<script type = "text/javascript">
+		$( document ).ready(function() {
+			toggle_upcoming_games();
+		});
+
+		function toggle_prediction_stats() {
+			$(".d3_charts").addClass("hidden");
+			$(".fixturesListTable").addClass("hidden");
+			$(".prediction_charts").removeClass("hidden");
+			$(".prediction_charts").addClass("visible");
+		}
+
+		function toggle_footopia_stats() {
+			$(".d3_charts").addClass("hidden");
+			$(".fixturesListTable").addClass("hidden");
+			$(".footopia_charts").removeClass("hidden");
+			$(".footopia_charts").addClass("visible");
+		}
+
+		function toggle_upcoming_games() {
+			$(".d3_charts").addClass("hidden");
+			$(".fixturesListTable").removeClass("hidden");
+			$(".fixturesListTable").addClass("visible");
+			$(".fixture").empty();
+			get_upcoming_games();
+		}
+
+		$("#selTourn_prediction").change(function() {
+			var selected = $("#selTourn_prediction").val().split("+");
+			var tourn_selected = selected[0];
+			var season = selected[1];
+			if (tourn_selected != "") {
+				getPointsInTournForPrediction(tourn_selected, season);
+			} else {
+				$(".prediction_chart").empty();
+			}
+		});
+
+		function get_upcoming_games() {
+			$.ajax({
+				url : "{% url 'get_upcoming_games' %}",
+				type: "GET",
+				success:function(data) {
+					for(var i = 0; i < data.fixtures.length; i++) {
+					  addFixture(data.fixtures[i], i);
+					}
+				},
+				error: function(error){
+					console.log('error' + error);
+				}
+			});
+		}
+
+		function addFixture(fixture, i) {
+			var tableRow = $("#dummyEntryHome").clone();
+			tableRow.attr("id", fixture.match_id);
+			tableRow.addClass("fixture");
+			team1_logo = "<img class = 'logos' src='/team-logos/"+fixture.team1_logo+"'/>";
+			team2_logo = "<img class = 'logos' src='/team-logos/"+fixture.team2_logo+"'/>";
+			tableRow.find("#dateTime").html(fixture.date);
+			tableRow.find("#team1Logo").html(team1_logo);
+			tableRow.find("#team1Name").html(fixture.team1);
+			tableRow.find("#team2Name").html(fixture.team2);
+			tableRow.find("#team2Logo").html(team2_logo);
+			tableRow.show();
+			$("#fixturesListHome").append(tableRow);
+		}
+
+		function getPointsInTournForPrediction(tourn_selected, season) {
+			$.ajax({
+				url : tourn_selected + "/"+ season + "/get_prediction_chart",
+				type: "GET",
+				success:function(response) 
+				{
+					$(".prediction_chart").empty();
+					draw_barchart_from_data(response, "prediction_chart");
+				},
+				error: function(error){
+					console.log('error' + error);
+				}
+			});
+		}
+
+		$("#selTourn_footopia").change(function() {
+			var selected = $("#selTourn_footopia").val().split("+");
+			var tourn_selected = selected[0];
+			var season = selected[1];
+			if (tourn_selected != "") {
+				getPointsInFootopia(tourn_selected, season);
+			} else {
+				$(".footopia_chart").empty();
+			}
+		});
+
+		function getPointsInFootopia(tourn_selected, season) {
+			$.ajax({
+				url : tourn_selected + "/"+ season + "/get_footopia_chart",
+				type: "GET",
+				success:function(response) 
+				{
+					$(".footopia_chart").empty();
+					draw_barchart_from_data(response, "footopia_chart");
+				},
+				error: function(error){
+					console.log('error' + error);
+				}
+			});
+		}
+	</script>
+	{% include 'charts/d3_user_prediction_point.html' %}
+{%endblock script%}

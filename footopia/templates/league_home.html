@@ -1,0 +1,42 @@
+{% extends 'league_base.html' %}
+{%block league_heading%}
+> Home
+{%endblock%}
+{%block league %}
+<br>
+
+<h4><strong>Public League</strong></h4>
+<table id = "public" class="table table-striped">
+  <tr><th>League Name</th><th>Description</th><th>Owner</th></tr>
+  {% for league in league_data %}
+  {% if not league.is_private%}
+  <tr>
+    <td><a href="{% url league_view tournament.tourn_format.tourn_id tournament.season league.id  %}">{{league.name}}</a></td>
+    <td>{{league.description}}</td>
+    <td><strong>Admin</strong></td>
+  </tr>
+  {%endif%}
+  {% endfor %}
+</table>
+<br>
+<h4><strong>Private League</strong></h4>
+Create your own league by clicking
+<a href="{% url league_create tournament.tourn_format.tourn_id tournament.season  %}">Create League </a>
+or join a private league by clicking <a href="{% url league_join tournament.tourn_format.tourn_id tournament.season  %}">Join League </a>
+<br><br>
+<table id = "Private" class="table table-striped">
+  <tr><th>League Name</th><th>Description</th><th>Owner</th></tr>
+  {% for league in league_data %}
+  {% if league.is_private%}
+  <tr>
+    <td><a href="{% url league_view tournament.tourn_format.tourn_id tournament.season league.id  %}">{{league.name}}</a></td>
+    <td>{{league.description}}</td>
+    <td><a href="{% url 'view_user_profile' league.user.id %}">{{league.user.username}}</a></td>
+  </tr>
+  {%endif%}
+  {% endfor %}
+</table>
+{%endblock%}
+{%block points %}
+{% include 'pts_table.html' %}
+{%endblock%}

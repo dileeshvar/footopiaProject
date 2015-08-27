@@ -1,0 +1,11 @@
+{
+	"players": [
+		{% for eachplayer in players_with_types %}
+		{
+			"playerName" : "{{eachplayer.0}}",		
+			"playerType" : "{{eachplayer.1}}",
+			"playerRating" : "{{eachplayer.2}}"
+		}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	]
+}

@@ -1,0 +1,21 @@
+{% extends 't_base.html' %}
+
+{% block content %}
+<br>
+<div class="col-sm-7" style="padding:2px;">
+<div class="panel panel-info" style="padding:0px;">
+<div class="panel-heading">Rules</div>
+<div class="panel panel-default" style="padding:0px;">
+<div class="panel-body" style="padding:10px;">
+
+<h4>The rules of Prediction are as follows:</h4>
+The User can predict the outcome of a match and will be awarded points based on the correctness of the predictions.<br><br>
+The points system is as follows:<br><br>
+<table border=1>
+<tr><th>Scenario</th><th>Points</th></tr>
+<tr><td>Predicts the result and Score correctly </td><td>30</td></tr>
+<tr><td>Predicts the result and goal difference correctly</td><td> 20</td></tr>
+<tr><td>Predicts the result correctly </td><td>10</td></tr>
+<tr><td>Predicts incorrectly</td><td> -10</td></tr>
+</table>
+{% endblock %}

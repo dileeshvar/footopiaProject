@@ -1,0 +1,13 @@
+{ "gameweek" : "{{gameweek}}",
+  "best_players": [
+	{% for entry in best_players %}
+		{"player_name" : "{{entry.player.player_name}}",
+		"team_name" : "{{entry.player.current_club.club_name}}",
+		"position" : "{{entry.player.player_type}}",
+		"minutes_played" : "{{entry.mins_played}}", 
+		"goals_scored" : "{{entry.goals_scored}}",
+		"yellow_cards" : "{{entry.yellow_card}}",
+		"red_cards" : "{{entry.red_card}}",
+		"points" : "{{entry.points}}"}{% if not forloop.last %},{% endif %}
+	{% endfor %}
+]}

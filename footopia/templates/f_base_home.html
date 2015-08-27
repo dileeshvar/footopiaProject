@@ -1,0 +1,67 @@
+{% extends 't_base.html' %}
+{%block content%}
+<br>
+<div class="col-sm-2 pull-left" style="padding:2px;">
+  <div class="panel panel-info" style="padding:0px;">
+    <div class="panel-heading">Leader Board</div>
+    <div class="panel-body" style="padding:1px;">
+      <div class="table">
+        {%block leader %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-sm-7" style="padding:2px;">
+  <div class="panel panel-default" style="padding:0px;">
+    <div style="border-style:solid; border-width:1px" class="panel-body" style="padding:0px;">
+      {%block trend %}
+      {%endblock%}
+    </div>
+  </div>
+
+  <div class="panel panel-default" style="padding:0px;">
+  {% if team_exists %}
+    <div class="panel-heading" >My Team</div>
+    <div class="panel-body" style="padding:0px;">
+      <div role="tabpanel" class="col-sm-10" style="padding:0px;">
+        <ul id="tabs" class="nav nav-tabs" role="tablist" data-tabs="tabs">
+          <li class="active"><a href="#field" data-toggle="tab">Field View</a></li>
+          <li><a href="#data" data-toggle="tab">Data View</a></li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        {%block my_team %}
+        {%endblock%}
+      </div>
+    </div>
+
+
+{% else %}
+You do not have a Footopia team. Click below to select your team <br/>
+<a href="{% url 'create_team' tournament.tourn_format.tourn_id tournament.season  %}"><button class="btn btn-default btn-sm">Create Team</button></a>
+{% endif %}
+	</div>
+
+</div>
+<div class="col-sm-3 pull-right" style="padding:2px;">
+  <div class="panel panel-info" style="padding:0px;">
+    <div class="panel-heading">Points Table</div>
+    <div class="panel-body" style="padding:2px;">
+      <div class="table">
+        {%block points %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}
+{%block script%}
+<script>
+$('#tabs a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+
+</script>
+ {%endblock%}

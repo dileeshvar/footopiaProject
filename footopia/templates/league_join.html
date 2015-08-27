@@ -1,0 +1,28 @@
+{% extends 'league_base.html' %}
+{%block league_heading%}
+> Join
+{%endblock%}
+{%block league %}
+<br>
+<form action="{% url league_join tournament.tourn_format.tourn_id tournament.season %}" name="league_form" method="post">
+  <table class="table ">
+  {% for field in J_form.visible_fields %}
+    <tr>
+      <td>{{field.label}}</td>
+      {% if field.errors %}
+      <td class="form-group has-error">
+      {%else%}
+      <td>
+      {%endif%}
+        {{field.errors}}{{field}}
+      <td>
+    </tr>
+  {% endfor %}
+    <tr><td></td><td class="pull-right"><button type="submit" name = 'join' class="btn btn-primary">Join</button></td></tr>
+  </table>
+  {% csrf_token %}
+</form>
+{%endblock%}
+{%block points %}
+{% include 'pts_table.html' %}
+{%endblock%}

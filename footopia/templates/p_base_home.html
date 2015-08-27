@@ -1,0 +1,47 @@
+{% extends 't_base.html' %}
+{% load cust_tags %}
+{%block content%}
+<br>
+<div class="col-sm-3 pull-left">
+  <div class="panel panel-default">
+    <div class="panel-heading">Leader Board</div>
+    <div class="panel-body">
+      <div class="table">
+        {%block leader %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-sm-6">
+  {% if enroll == 'success' %}
+  <div class="alert alert-success alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    Enrolled successfully to prediction game of this tournament
+  </div>
+  {% endif %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      {%block prediction_heading%}
+      {%endblock%}
+    </div>
+    <div class="panel-body">
+      <div class="table">
+        {%block prediction %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-sm-3 pull-right">
+  <div class="panel panel-default">
+    <div class="panel-heading">Points Table</div>
+    <div class="panel-body">
+      <div class="table">
+        {%block points %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

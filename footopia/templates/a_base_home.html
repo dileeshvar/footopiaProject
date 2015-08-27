@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{%block navbar%}				
+	<ul class="nav navbar-nav pull-right">
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+{%endblock%}
+
+{%block main%}
+<br>
+<div class="col-sm-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">Create New Tournament</div>
+    <div class="panel-body">
+      <div class="table">
+	    {%block create_tournament %}
+		{%endblock%}
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Player Price Change</div>
+    <div class="panel-body">
+      <div class="table">
+	    {%block player_price %}
+		{%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-sm-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">Create Tournament Season</div>
+    <div class="panel-body">
+      <div class="table">
+        {%block create_season %}
+		{%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-sm-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">Available Tournaments</div>
+    <div class="panel-body">
+      <div class="table">
+        {% block view_tournaments %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Pull Data</div>
+    <div class="panel-body">
+      <div class="table">
+        {% block pull_data %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock main%}

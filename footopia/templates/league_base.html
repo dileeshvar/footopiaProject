@@ -1,0 +1,24 @@
+{% extends 't_base.html' %}
+{%block content%}
+<br>
+<div class="col-sm-9" style="padding:2px;">
+  <div class="panel panel-default" style="padding:0px;">
+    <div class="panel-heading" ><a href="{% url league_type tournament.tourn_format.tourn_id tournament.season  %}">League </a> {%block league_heading%}{%endblock%}</div>
+    <div class="panel-body" style="padding:3px;">
+      {%block league %}
+      {%endblock%}
+    </div>
+</div>
+</div>
+<div class="col-sm-3 pull-right" style="padding:2px;">
+  <div class="panel panel-info" style="padding:0px;">
+    <div class="panel-heading">Points Table</div>
+    <div class="panel-body" style="padding:2px;">
+      <div class="table">
+        {%block points %}
+        {%endblock%}
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

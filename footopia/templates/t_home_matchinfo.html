@@ -1,0 +1,136 @@
+{% extends 't_base.html' %}
+
+	{%block content%}
+	<br>	
+	
+  <div class="col-sm-8 pull-left">
+    <div class="panel panel-default">
+	<p> <b> {{teams.team1.club}} </b> <p>
+		
+		<div class="panel-heading">Line up</div>
+		  <div class="panel-body">
+			<div class="table">
+				<table class="table table-striped" style="font-size: 0.8em;">						
+				{% include 't_home_matchinfo_headInfo.html' %}												
+				
+				{% for eachPlayer in players1 %}					
+				
+					{% if eachPlayer.started == True %}
+						{% include 't_home_matchinfo_playersInfo.html' %}
+					{% endif %}
+				{% endfor %}
+				</table>
+						  
+			</div>
+		  </div>
+		  
+		  <div class="panel-heading">Substitutes Played</div>
+		  <div class="panel-body">
+			<div class="table">
+				<table class="table table-striped" align="center" style="font-size: 0.8em">						
+				{% include 't_home_matchinfo_headInfo.html' %}								
+				
+				{% for eachPlayer in players1 %}					
+				
+					{% if eachPlayer.started == False %}
+						{% include 't_home_matchinfo_playersInfo.html' %}
+					{% endif %}
+				{% endfor %}
+				</table>
+						  
+			</div>
+		  </div>	
+  </div>
+  <div class="panel panel-default">
+	<p> <b> {{teams.team2.club}} </b> <p>
+		
+		<div class="panel-heading">Line up</div>
+		  <div class="panel-body">
+			<div class="table">
+				<table class="table table-striped" align="center" style="font-size: 0.8em">						
+				{% include 't_home_matchinfo_headInfo.html' %}								
+				
+				{% for eachPlayer in players2 %}					
+				
+					{% if eachPlayer.started == True %}
+						{% include 't_home_matchinfo_playersInfo.html' %}
+					{% endif %}
+				{% endfor %}
+				</table>
+						  
+			</div>
+		  </div>
+		  
+		  <div class="panel-heading">Substitutes Played</div>
+		  <div class="panel-body">
+			<div class="table">
+				<table class="table table-striped" align="center" style="font-size: 0.8em">						
+				{% include 't_home_matchinfo_headInfo.html' %}								
+				
+				{% for eachPlayer in players2 %}					
+				
+					{% if eachPlayer.started == False %}
+						{% include 't_home_matchinfo_playersInfo.html' %}
+					{% endif %}
+				{% endfor %}
+				</table>
+						  
+			</div>
+		  </div>	
+  </div>
+ </div>
+ <div class="col-sm-4 pull-right">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+		<div style="text-align:center">
+			<b class = "pull-left"> {{teams.team1.club}} </b>
+			<b>{{match.team1_score}} - {{match.team2_score}} </b>
+			<b class = "pull-right"> {{teams.team2.club}} </b>		  	 
+		</div>
+		
+	  </div>
+      <div class="panel-body">
+        <div class="table">
+			<div class="col-sm-6" style="font-size: 0.8em">
+				<table class="table table-striped pull-left" align="left" style="font-size: 0.8em">										
+										
+				{% for each in team1goals %}
+					<tr>
+						<td>{{each.0}} </td>						
+						<td> {{each.1}}</td>
+					</tr>
+					<!--<li class="pull-left"> {{each.0}} - {{each.1}}</li>-->
+				{% endfor %}
+				
+				{% for each in team2owngoals %}
+					<tr>
+						<td>{{each.0}} </td>						
+						<td> {{each.1}} (OG)</td>
+					</tr>
+				{% endfor %}								
+				
+				</table>
+			</div>
+			<div class="col-sm-6 " style="font-size: 0.8em">								
+				<table class="table table-striped pull-right" align="right" style="font-size: 0.8em">										
+				{% for each in team2goals %}
+					<tr>
+						<td>{{each.0}} </td>						
+						<td> {{each.1}}</td>
+					</tr>
+				{% endfor %}
+				
+				{% for each in team1owngoals %}
+					<tr>
+						<td>{{each.0}} </td>						
+						<td> {{each.1}} (OG)</td>
+					</tr>
+					<!--<li class="pull-left"> {{each.0}} - {{each.1}} (OG)</li>-->
+				{% endfor %}
+				</table>
+			</div>
+        </div>
+      </div>
+    </div>
+  </div>
+	{%endblock%}

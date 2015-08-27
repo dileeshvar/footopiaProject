@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{%block main%}
+<h1>Footopia</h1> Your Soccer Fantasy World !	
+<br>
+{% if confirmStatus == 'true' %}
+<div class="jumbotron">	
+	{% if passwordChangeStatus == 'true'%}
+	Thank you for changing your password.
+	{% else %}
+	Thank you for registering with Footopia.
+	{% endif %}
+	<br>
+	<br>
+	
+	<p>
+	Please <a href="{% url 'home' %}">login</a> to access Footopia.
+	</p>
+</div>	
+{% else %}
+<div class="jumbotron">	
+	<form class="form-horizontal" role="form" action= "resetPass" method="post">
+	<h2>Password Reset</h2>
+	{% if Reset_Password_form.errors %}
+			<p style="color:red"> Passwords doesn't match </p>
+	{% endif %}
+		<div class="form-group">
+			<div class="col-xs-6">
+              {{Reset_Password_form.password1}}
+            </div>
+            <div class="col-xs-10">
+              {{Reset_Password_form.password1.errors}}
+            </div>			
+			<br>
+			<div class="col-xs-6">
+              {{Reset_Password_form.password2}}		  
+            </div>
+            <div class="col-xs-10">
+              {{Reset_Password_form.password2.errors}}
+            </div>						
+		</div>              
+		
+		<button type="submit" class="btn btn-primary">Reset it !!</button>
+		{% csrf_token %}
+	</form>
+</div>
+{% endif %}
+
+{%endblock%}

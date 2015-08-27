@@ -1,0 +1,9 @@
+{ "top_scorers": [
+	{% for entry in top_scorers %}
+		{"player_name" : "{{entry.squad.player.player_name}}",
+		"team_name" : "{{entry.squad.player.current_club.club_name}}",
+		"minutes_played" : "{{entry.total_mins_played}}", 
+		"goals_scored" : "{{entry.total_goals}}",
+		"scoring_rate" : "{{entry.avg_rate_of_scoring}}"}{% if not forloop.last %},{% endif %}
+	{% endfor %}
+]}

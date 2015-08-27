@@ -1,0 +1,32 @@
+{% extends 'league_base.html' %}
+{%block league_heading%}
+> Create League
+{%endblock%}
+{%block league %}
+<div>
+  <br>
+<form action="{% url league_create tournament.tourn_format.tourn_id tournament.season %}" name="league_form" method="post">
+  <table class="table">
+  {% for field in L_form.visible_fields %}
+    <tr>
+      <td>{{field.label}}</td>
+      {% if field.errors %}
+      <td class="form-group has-error">
+      {%else%}
+      <td>
+      {%endif%}
+        {{field.errors}}{{field}}
+      <td>
+    </tr>
+  {% endfor %}
+    <tr><td></td><td><button type="submit" name = 'register' class="btn btn-primary">Create</button>&nbsp&nbsp<button class="btn btn-default" type="reset">Clear</button></td></tr>
+  </table>
+  {% csrf_token %}
+</form>
+</div>
+<div class="col-sm-3">
+</div>
+{%endblock%}
+{%block points %}
+{% include 'pts_table.html' %}
+{%endblock%}

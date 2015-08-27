@@ -1,0 +1,38 @@
+{% extends 't_base.html' %}
+{%block content%}
+<br>
+<div class="col-sm-7" style="padding:2px;">
+<div class="panel panel-info" style="padding:0px;">
+<div class="panel-heading">Rules</div>
+<div class="panel panel-default" style="padding:0px;">
+<div class="panel-body" style="padding:10px;">
+ 
+    
+The rules of Footopia are as follows:
+The user can select a team of 11 members with <br>
+	1 Goal Keeper<br>
+	4 Defenders<br>
+	4 MidFielders<br>
+	2 Strikers<br>
+The user can set his team before the game week starts, which is usually Saturday.<br>
+The user is allowed {{allowed_transfers}} transfers per season/tournament.<br>
+The user is allowed {{wildcard}} wildcards per season/tournament.<br><br>
+
+The points system is as follows:<br><br><br>
+<table border=1>
+<tr><th>Scenario</th><th>Points</th></tr>
+<tr><td>Goalkeeper scores goal</td><td> 5</td></tr>
+<tr><td>Defender scores goal</td><td>4</td></tr>
+<tr><td>Midfielder scores goal</td><td>3</td></tr>
+<tr><td>Striker scores goal</td><td>3</td></tr>
+<tr><td>Player scores own goal</td><td>-3</td></tr>
+<tr><td>Player gets yellow card</td><td>-1</td></tr>
+<tr><td>Player gets red card</td><td>-5</td></tr>
+<tr><td>Player played minutes</td><td>1*</td></tr>
+</table>
+*-1 point for every 45 minutes played
+<br><br>
+</div></div>
+</div>
+</div>
+{% endblock %}

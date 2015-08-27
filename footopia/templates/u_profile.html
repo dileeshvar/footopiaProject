@@ -1,0 +1,27 @@
+{% extends "u_base_home.html" %}
+{% block user_data%}
+<div class="col-sm-3 pull-left">
+</div>
+<div class="col-sm-6">
+	{% if status == "success" %}
+		<div class="alert alert-success alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			Successfully updated!
+		</div>
+	{% endif %}
+	<div id="">
+	<form action="{% url 'view_user_profile' user.id %}" name="profile_form" method="post">
+		<table class="table table-striped ">
+		{% for field in Profile_Form.visible_fields %}
+			<tr><td>{{field.label}}</td><td>{{field.errors}}{{field}}<td></tr>
+		{% endfor %}
+		{% if is_me == True %}
+			<tr><td></td><td><input type="submit"><button type="reset">Clear</button></td></tr>
+		{% endif%}
+		</table>
+		{% csrf_token %}
+	</form>
+</div>
+<div class="col-sm-3">
+</div>
+{% endblock user_data %}

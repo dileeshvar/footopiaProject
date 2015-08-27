@@ -1,0 +1,124 @@
+{% extends 'p_base_home.html' %}
+{% load cust_tags %}
+{%block leader %}
+{% include 'leaderboard.html' %}
+{%endblock%}
+{%block prediction_heading%}
+<select id="selGW" name='gameweek' class="form-control">
+{% for i in tournament.tourn_format.no_of_gameweeks|get_range:1 %}
+<option value="{{i}}">Gameweek {{i}}</option>
+{% endfor %}
+</select>
+{%endblock%}
+{%block prediction %}
+<form id="prediction-form" method="post" action="{% url 'predict' tournament.tourn_format.tourn.tourn_cd tournament.season%}">
+<input id="hdnGW" name="gameweek" type="hidden" value="{{gameweek}}"/>
+{{formset.management_form}}
+{% if formset.errors %}
+  <div class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	Error valid scores for the teams<br>
+  </div>
+{% endif %}
+<div id = "fixturelist">
+	<div id = "dummyEntry" style="display:none">
+		<div class="panel panel-default">
+			<div class="panel-heading" id="dateTime">Match Date</div>
+			<div class="panel-body-predict">
+				<table align="center" style="font-size: 0.8em">
+					<input id="hdnMatch" type="hidden"/>
+					<tr align="center">
+						<td style="padding-top:12px" id="team1Logo" style="text-align:center" width="35%" ></td>
+						<td style="text-align:center width:30%"><input style="height:50px; width:40px; font-size:14pt" id="team1Pred" type="text" class="pred-text" maxlength=2 /> - <input style="height:50px; width:40px; font-size:14pt;" id="team2Pred" type="text" class="pred-text" maxlength=2 /></td>
+						<td style="padding-top:12px" id="team2Logo" style="text-align:center" style="text-align:center" width="35%"></td>
+					</tr>
+					<tr align="center">
+						<td id="team1Name" style="text-align:center" style="text-align:center width:40%"></td>
+						<td style="text-align:center width:20%" align="center"> <p id="result"> </p> <p id="points"></p> </td>
+						<td id="team2Name" style="text-align:center" style="text-align:center width:40%"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% csrf_token %}
+<div style="text-align:center">
+	<input class="btn btn-primary" id="submitBtn" type="submit" disabled value="Save Predictions"/>
+</div>
+</form>
+{%endblock%}
+{%block points %}
+{% include 'pts_table.html' %}
+{%endblock%}
+{%block script%}
+<script type = "text/javascript">
+$("#selGW").change(function() {
+  $("#hdnGW").val($("#selGW").val());
+  getFixtures();
+});
+$("#selGW").val("{{gameweek}}");
+getFixtures();
+function getFixtures() {
+  $.ajax({
+    url : "{% url 'get_fixtures' tournament.tourn_format.tourn.tourn_cd tournament.season%}",
+	type: "GET",
+	data : {'gameweek': $("#selGW").val()},
+	success:function(data)
+	{
+	  var can_predict = false;
+	  $(".fixture").remove();
+	  if (data.gameweek == $("#selGW").val()) {
+		for(var i = 0; i < data.fixtures.length; i++) {
+		  addFixture(data.fixtures[i], i);
+		  if (data.fixtures[i].locked == 'No') {
+		    can_predict = true;
+		  }
+		}
+		$("#id_form-TOTAL_FORMS").val(data.fixtures.length);
+	  }
+	  $("#submitBtn").prop('disabled', !can_predict);
+	},
+	error: function(error){
+	  console.log('error' + error);
+	}
+  });
+}
+function addFixture(fixture, i) {
+  var div_fixture = $("#dummyEntry").clone();
+  var team1_logo = "<img class = 'logos-prediction' src='/team-logos/"+fixture.team1_logo+"'/>";
+  var team2_logo = "<img class = 'logos-prediction' src='/team-logos/"+fixture.team2_logo+"'/>";
+  div_fixture.attr("id", fixture.match_id);
+  div_fixture.addClass("fixture");
+  div_fixture.find("#dateTime").html(fixture.date);
+  div_fixture.find("#team1Name").html(fixture.team1);
+  div_fixture.find("#team2Name").html(fixture.team2);
+  div_fixture.find("#hdnMatch").val(fixture.match_id);
+  div_fixture.find("#team1Pred").val(fixture.team1Pred);
+  div_fixture.find("#team2Pred").val(fixture.team2Pred);
+  div_fixture.find("#hdnMatch").attr('name', 'form-' + i + '-match');
+  div_fixture.find("#team1Pred").attr('name', 'form-' + i + '-team1_score');
+  div_fixture.find("#team2Pred").attr('name', 'form-' + i + '-team2_score');
+  div_fixture.find("#team1Logo").html(team1_logo);
+  div_fixture.find("#team2Logo").html(team2_logo);
+  if (fixture.locked == 'Yes') {
+    div_fixture.find("#team1Pred").prop('readonly', true);
+	div_fixture.find("#team1Pred").addClass("disabled-text-field");
+	div_fixture.find("#team2Pred").prop('readonly', true);
+	div_fixture.find("#team2Pred").addClass("disabled-text-field");
+  }
+  if (fixture.team1Score != 'None') {
+    div_fixture.find("#result").html(fixture.team1Score + '-' + fixture.team2Score);
+	if (fixture.team1Pred != '') {
+      div_fixture.find("#points").html(fixture.pts);
+    }
+  }
+  div_fixture.show();
+  $("#fixturelist").append(div_fixture);
+}
+
+$("#home").removeClass("active")
+$("#footopia_menu").removeClass("active")
+$("#prediction_menu").addClass("active")
+</script>
+{% endblock %}

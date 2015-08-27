@@ -1,0 +1,48 @@
+{% extends 't_base.html' %}
+{%block content%}
+<br>
+<div role="tabpanel" class="col-sm-12" style="padding:2px;">
+  <ul id="tabs" class="nav nav-tabs" role="tablist" data-tabs="tabs">
+    <li class="active"><a href="#field" data-toggle="tab">Field View</a></li>
+    <li><a href="#data" data-toggle="tab">Data View</a></li>
+  </ul>
+  <div class="panel panel-default" style="padding:0px;">
+    <div class="panel-body" style="padding:0px;">
+      <div class="col-sm-8 pull-right">
+        <div class="panel panel-default">
+          <div class="panel-body">
+              {%block budget %}
+              {%endblock%}
+          </div>
+        </div>
+          <div class="panel panel-default" style="padding:0px;">
+            <div class="panel-body" style="padding:0px;">
+              <div class="tab-content">
+                {%block team_selection %}
+                {%endblock%}
+            </div>
+          </div>
+      </div>
+      </div>
+      <div class="col-sm-4 pull-left">
+        <div class="panel panel-primary">
+          <div class="panel-heading">Player Filter</div>
+          <div class="panel-body">
+              {%block player_selector %}
+              {%endblock%}
+          </div>
+        </div>
+        <div class="panel panel-primary"  style="padding:0px;">
+          <div class="panel-heading">Player List</div>
+          <div class="panel-body"  style="padding:0px;">
+            <div class="table" style="height:300px; overflow:auto">
+              {%block player_list %}
+              {%endblock%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

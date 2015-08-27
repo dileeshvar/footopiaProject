@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+    {%block navbar%}
+    <ul class="nav navbar-nav pull-right">
+      <li class="active"><a href="{% url 'home' %}">Home</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.username}} <span class="caret"></span></a>
+        <ul class="dropdown-menu pull-right" role="menu">
+		  <li><a href="{% url 'view_user_profile' user.id %}">My Profile</a></li>
+        </ul>
+      </li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+    {%endblock%}
+    {%block main%}
+    <h1>{{tournament.tourn_name}}</h1>
+	<div class="panel panel-default">
+      <div class="panel-body" style="padding:0px;">
+        <div class="masthead">
+            <ul class="nav nav-justified">
+              <li id="home"><a href="{% url 'view_tournament' tournament.tourn_format.tourn.tourn_cd tournament.season%}">Home</a></li>
+              <li id="footopia_menu" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Footopia <span class="caret"></a>
+                <ul class="dropdown-menu">
+				  {% if is_foot_enrolled %}
+                  <li><a href="{% url 'footopia_home' tournament.tourn_format.tourn.tourn_cd tournament.season %}">My Team</a></li>
+				  <li><a href="{% url 'edit_team' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Edit Team</a></li>
+                  <li><a href="{% url 'f_get_my_leagues' tournament.tourn_format.tourn.tourn_cd tournament.season %}">View Leagues</a></li>
+                  <li><a href="{% url 'f_rules' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Rules</a></li>
+				  {% else %}
+				  <li><a href="{% url 'join_footopia' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Join Footopia</a></li>
+				  <li><a href="{% url 'f_rules' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Rules</a></li>
+				  {% endif %}
+                </ul>
+              </li>
+              <li id="prediction_menu" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Prediction <span class="caret"></a>
+                <ul class="dropdown-menu">
+				  {% if is_pred_enrolled %}
+                  <li><a href="{% url 'predict_home' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Make Predictions</a></li>
+				  <li><a href="{% url 'p_get_my_leagues' tournament.tourn_format.tourn.tourn_cd tournament.season %}">View Leagues</a></li>
+				  <li><a href="{% url 'p_rules' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Rules</a></li>
+				  {% else %}
+				  <li><a href="{% url 'join_prediction' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Join Predictions</a></li>
+				  <li><a href="{% url 'p_rules' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Rules</a></li>
+				  {% endif %}
+                </ul>
+              </li>
+              <li><a href="{% url 'stats_home' tournament.tourn_format.tourn.tourn_cd tournament.season %}">Statistics</a></li>
+            </ul>
+        </div>
+        {%block content%}
+        {%endblock%}
+      </div>
+    </div>
+    {%endblock%}

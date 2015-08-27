@@ -1,0 +1,11 @@
+{
+	"teams":[
+		{% for team in teams %}
+		{
+			"name" : "{{team.club.club_name}}", 
+			"id" : "{{team.id}}"
+		}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	]
+	
+}
